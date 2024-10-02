@@ -30,6 +30,23 @@ class LogarteOverlay extends StatelessWidget {
     });
   }
 
+  static void detach({
+    required BuildContext context,
+    required Logarte instance,
+  }) {
+    final entry = OverlayEntry(
+      builder: (context) {
+        return LogarteOverlay._internal(
+          instance: instance,
+        );
+      },
+    );
+
+    Future.delayed(kThemeAnimationDuration, () {
+      entry.remove();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final height = (MediaQuery.of(context).size.height / 2) - 12.0;
