@@ -57,7 +57,7 @@ class _LogarteMagicalTapState extends State<LogarteMagicalTap> {
       widget.logarte.attach(context: context, visible: true);
     } else if (_tapCount == _deactivationTapCount) {
       widget.logarte.attach(context: context, visible: false);
-      _tapCount %= _activationTapCount;
+      _tapCount = 0;
     }
   }
 }
