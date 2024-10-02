@@ -211,10 +211,7 @@ class Logarte {
         instance: this,
       );
     }else{
-      return LogarteOverlay.detach(
-        context: context,
-        instance: this,
-      );
+      return LogarteOverlay.detach();
     }
   }
 

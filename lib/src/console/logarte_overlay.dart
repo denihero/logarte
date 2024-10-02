@@ -5,6 +5,7 @@ import 'package:logarte/src/console/logarte_auth_screen.dart';
 
 class LogarteOverlay extends StatelessWidget {
   final Logarte instance;
+  static OverlayEntry? _entry;
 
   const LogarteOverlay._internal({
     required this.instance,
@@ -15,7 +16,9 @@ class LogarteOverlay extends StatelessWidget {
     required BuildContext context,
     required Logarte instance,
   }) {
-    final entry = OverlayEntry(
+    if (_entry != null) return; // Prevent multiple overlays being added
+
+    _entry = OverlayEntry(
       builder: (context) {
         return LogarteOverlay._internal(
           instance: instance,
@@ -26,25 +29,15 @@ class LogarteOverlay extends StatelessWidget {
     Future.delayed(kThemeAnimationDuration, () {
       final overlay = Overlay.of(context);
 
-      overlay.insert(entry);
+      if (_entry != null) {
+        overlay.insert(_entry!);
+      }
     });
   }
 
-  static void detach({
-    required BuildContext context,
-    required Logarte instance,
-  }) {
-    final entry = OverlayEntry(
-      builder: (context) {
-        return LogarteOverlay._internal(
-          instance: instance,
-        );
-      },
-    );
-
-    Future.delayed(kThemeAnimationDuration, () {
-      entry.remove();
-    });
+  static void detach() {
+    _entry?.remove();
+    _entry = null; // Clear the reference to indicate the overlay is removed
   }
 
   @override
