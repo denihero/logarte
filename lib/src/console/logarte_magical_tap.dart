@@ -29,13 +29,15 @@ class LogarteMagicalTap extends StatefulWidget {
 }
 
 class _LogarteMagicalTapState extends State<LogarteMagicalTap> {
-  late int _count;
+  static const int _activationTapCount = 10;
+  static const int _deactivationTapCount = 20;
+
+  late int _tapCount;
 
   @override
   void initState() {
     super.initState();
-
-    _count = 0;
+    _tapCount = 0;
   }
 
   @override
@@ -43,13 +45,19 @@ class _LogarteMagicalTapState extends State<LogarteMagicalTap> {
     return GestureDetector(
       behavior: widget.behavior,
       onTap: () {
-        _count++;
-
-        if (_count == 10) {
-          widget.logarte.attach(context: context, visible: true);
-        }
+        _tapCount++;
+        _handleLogarteVisibility();
       },
       child: widget.child,
     );
+  }
+
+  void _handleLogarteVisibility() {
+    if (_tapCount == _activationTapCount) {
+      widget.logarte.attach(context: context, visible: true);
+    } else if (_tapCount == _deactivationTapCount) {
+      widget.logarte.attach(context: context, visible: false);
+      _tapCount %= _activationTapCount;
+    }
   }
 }
