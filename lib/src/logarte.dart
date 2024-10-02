@@ -11,11 +11,14 @@ import 'package:logarte/src/models/logarte_entry.dart';
 import 'package:logarte/src/models/navigation_action.dart';
 import 'package:stack_trace/stack_trace.dart';
 
+import 'logger/outputs/memory_output.dart';
+
 class Logarte {
   final String? password;
   final bool ignorePassword;
   final Function(String data)? onShare;
   final int logBufferLength;
+  final bool disableDebugConsoleLogs;
   final Function(BuildContext context)? onRocketLongPressed;
   final Function(BuildContext context)? onRocketDoubleTapped;
   late final Logger _logger;
@@ -24,11 +27,14 @@ class Logarte {
     this.password,
     this.ignorePassword = !kReleaseMode,
     this.onShare,
+    this.disableDebugConsoleLogs = false,
     this.onRocketLongPressed,
     this.onRocketDoubleTapped,
     this.logBufferLength = 2500,
   }) {
     _logger = Logger(
+      output: disableDebugConsoleLogs ? MemoryOutput(bufferSize: 1) : null,
+      level: disableDebugConsoleLogs ? Level.off : Level.trace,
       printer: PrettyPrinter(
         lineLength: 100,
         methodCount: 0,
@@ -39,7 +45,7 @@ class Logarte {
   final logs = ValueNotifier(<LogarteEntry>[]);
   void _add(LogarteEntry entry) {
     //Drop the oldest log entry to prevent ram bloat
-    if (logs.value.length > logBufferLength){
+    if (logs.value.length > logBufferLength) {
       logs.value.removeAt(0);
     }
     logs.value = [...logs.value, entry];
@@ -51,13 +57,8 @@ class Logarte {
     Trace? trace,
     String? source,
   }) {
-    _log(
-      Level.info,
-      message,
-      write: write,
-      trace: trace ?? Trace.current(),
-        source: source
-    );
+    _log(Level.info, message,
+        write: write, trace: trace ?? Trace.current(), source: source);
   }
 
   void _log(
@@ -68,19 +69,20 @@ class Logarte {
     String? source,
   }) {
     // TODO: try and catch
-
-    _logger.log(
-      level,
-      message.toString(),
-    );
-
-    if (write) {
-      _add(
-        PlainLogarteEntry(
-          message.toString(),
-          source: source ?? (trace ?? Trace.current()).source,
-        ),
+    if (!disableDebugConsoleLogs) {
+      _logger.log(
+        level,
+        message.toString(),
       );
+
+      if (write) {
+        _add(
+          PlainLogarteEntry(
+            message.toString(),
+            source: source ?? (trace ?? Trace.current()).source,
+          ),
+        );
+      }
     }
   }
 

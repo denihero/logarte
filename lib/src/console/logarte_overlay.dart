@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:logarte/logarte.dart';
 import 'package:logarte/src/console/logarte_auth_screen.dart';
@@ -56,15 +57,15 @@ class _LogarteFAB extends StatefulWidget {
 }
 
 class _LogarteFABState extends State<_LogarteFAB> {
-  bool _isOpened = false;
+  ValueNotifier<bool> isOpened = ValueNotifier(false);
 
   @override
   void setState(VoidCallback fn) {
     if (mounted) super.setState(fn);
   }
 
-  Future<void> _onPressed() async {
-    if (_isOpened) {
+  Future<void> _onPressed(BuildContext context) async {
+    if (isOpened.value) {
       Navigator.of(context).pop();
     } else {
       Navigator.of(context).push<void>(
@@ -77,20 +78,20 @@ class _LogarteFABState extends State<_LogarteFAB> {
       );
     }
 
-    setState(() => _isOpened = !_isOpened);
+    isOpened.value = !isOpened.value;
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: _onPressed,
+      onTap: () => _onPressed(context),
       onDoubleTap: () {
-        if (!_isOpened) {
+        if (!isOpened.value) {
           widget.instance.onRocketDoubleTapped?.call(context);
         }
       },
       onLongPress: () {
-        if (!_isOpened) {
+        if (!isOpened.value) {
           widget.instance.onRocketLongPressed?.call(context);
         }
       },
@@ -104,9 +105,14 @@ class _LogarteFABState extends State<_LogarteFAB> {
             bottomLeft: Radius.circular(8.0),
           ),
         ),
-        child: Icon(
-          _isOpened ? Icons.close : Icons.rocket_launch_rounded,
-          color: Colors.white,
+        child: ValueListenableBuilder(
+          valueListenable: isOpened,
+          builder: (context, bool value, _) {
+            return Icon(
+              value ? Icons.close : Icons.rocket_launch_rounded,
+              color: Colors.white,
+            );
+          },
         ),
       ),
     );
