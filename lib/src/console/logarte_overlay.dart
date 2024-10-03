@@ -76,10 +76,8 @@ class _LogarteFABState extends State<_LogarteFAB> {
 
   Future<void> _onPressed(BuildContext context) async {
     if (isOpened.value) {
-      if (Navigator.canPop(context)) {
-        Navigator.of(context).popUntil(
-          (predicate) => predicate.settings.name == '/homePath',
-        );
+      while (Navigator.canPop(context)) {
+        Navigator.pop(context);
       }
     } else {
       Navigator.of(context).push<void>(
