@@ -2,10 +2,12 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:logarte/logarte.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:logarte/src/console/logarte_auth_screen.dart'
+    show LogarteAuthScreen;
 
 final logarte = Logarte(
   onShare: Share.share,
-  password: 'logarte',
+  ignorePassword: true,
   onRocketDoubleTapped: (context) {
     showDialog(
       context: context,
@@ -51,6 +53,7 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       title: 'Logarte Example',
       debugShowCheckedModeBanner: false,
@@ -59,10 +62,18 @@ class App extends StatelessWidget {
         useMaterial3: true,
         colorSchemeSeed: Colors.blueGrey.shade900,
       ),
+      routes: {
+        '/': (context) => const HomePage(),
+        '/logarte_auth': (context) => LogarteAuthScreen(
+              ModalRoute.of(context)?.settings.arguments as Logarte,
+            ),
+        '/logarte_dashboard': (context) => LogarteDashboardScreen(
+              ModalRoute.of(context)?.settings.arguments as Logarte,
+            ),
+      },
       navigatorObservers: [
         LogarteNavigatorObserver(logarte),
       ],
-      home: const HomePage(),
     );
   }
 }
@@ -86,10 +97,7 @@ class HomePageState extends State<HomePage> {
         LogarteDioInterceptor(logarte),
       );
 
-    logarte.attach(
-      context: context,
-      visible: false,
-    );
+
   }
 
   @override

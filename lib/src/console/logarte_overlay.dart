@@ -16,7 +16,7 @@ class LogarteOverlay extends StatelessWidget {
     required BuildContext context,
     required Logarte instance,
   }) {
-    if (_entry != null) return; // Prevent multiple overlays being added
+    if (_entry != null) return;
 
     _entry = OverlayEntry(
       builder: (context) {
@@ -37,7 +37,7 @@ class LogarteOverlay extends StatelessWidget {
 
   static void detach() {
     _entry?.remove();
-    _entry = null; // Clear the reference to indicate the overlay is removed
+    _entry = null;
   }
 
   @override
@@ -76,7 +76,11 @@ class _LogarteFABState extends State<_LogarteFAB> {
 
   Future<void> _onPressed(BuildContext context) async {
     if (isOpened.value) {
-      Navigator.of(context).pop();
+      if (Navigator.canPop(context)) {
+        Navigator.of(context).popUntil(
+          (predicate) => predicate.settings.name == '/homePath',
+        );
+      }
     } else {
       Navigator.of(context).push<void>(
         MaterialPageRoute(
