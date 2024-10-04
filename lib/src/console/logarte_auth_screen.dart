@@ -89,9 +89,11 @@ class _LogarteAuthScreenState extends State<LogarteAuthScreen> {
   }
 
   void _goToDashboard() {
-    Navigator.of(context).pushReplacementNamed(
-      '/logarte_dashboard',
-      arguments: widget.instance,
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) => LogarteDashboardScreen(widget.instance),
+        settings: const RouteSettings(name: '/logarte_dashboard'),
+      ),
     );
 
     _isLoggedIn = true;

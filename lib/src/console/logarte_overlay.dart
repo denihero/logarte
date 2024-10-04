@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:logarte/logarte.dart';
+import 'package:logarte/src/console/logarte_auth_screen.dart';
 
 class LogarteOverlay extends StatelessWidget {
   final Logarte instance;
@@ -75,9 +76,13 @@ class _LogarteFABState extends State<_LogarteFAB> {
         Navigator.pop(context);
       }
     } else {
-      Navigator.of(context).pushNamed<void>(
-        '/logarte_auth',
-        arguments: widget.instance,
+      Navigator.of(context).push<void>(
+        MaterialPageRoute(
+          builder: (_) {
+            return LogarteAuthScreen(widget.instance);
+          },
+          settings: const RouteSettings(name: '/logarte_auth'),
+        ),
       );
     }
 
