@@ -53,7 +53,6 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
       title: 'Logarte Example',
       debugShowCheckedModeBanner: false,
@@ -108,6 +107,7 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    print(ModalRoute.of(context)?.settings.name);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Example'),
@@ -163,11 +163,7 @@ class HomePageState extends State<HomePage> {
             children: [
               FilledButton.tonal(
                 onPressed: () {
-                  logarte.database(
-                    target: 'language',
-                    value: 'en',
-                    source: 'SharedPreferences',
-                  );
+                  logarte.openConsole(context);
                 },
                 child: const Text('Write to database'),
               ),

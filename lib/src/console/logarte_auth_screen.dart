@@ -40,6 +40,7 @@ class _LogarteAuthScreenState extends State<LogarteAuthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(ModalRoute.of(context)?.settings.name);
     return LogarteThemeWrapper(
       child: _isLoggedIn || _noPassword
           ? LogarteDashboardScreen(widget.instance)
@@ -88,11 +89,9 @@ class _LogarteAuthScreenState extends State<LogarteAuthScreen> {
   }
 
   void _goToDashboard() {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (_) => LogarteDashboardScreen(widget.instance),
-        settings: const RouteSettings(name: '/logarte_dashboard'),
-      ),
+    Navigator.of(context).pushReplacementNamed(
+      '/logarte_dashboard',
+      arguments: widget.instance,
     );
 
     _isLoggedIn = true;

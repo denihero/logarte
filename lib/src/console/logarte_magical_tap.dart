@@ -46,13 +46,13 @@ class _LogarteMagicalTapState extends State<LogarteMagicalTap> {
       behavior: widget.behavior,
       onTap: () {
         _tapCount++;
-        _handleLogarteVisibility();
+        _handleLogarteVisibility(context);
       },
       child: widget.child,
     );
   }
 
-  void _handleLogarteVisibility() {
+  void _handleLogarteVisibility(BuildContext context) {
     if (_tapCount == _activationTapCount) {
       widget.logarte.attach(context: context, visible: true);
     } else if (_tapCount == _deactivationTapCount) {

@@ -216,11 +216,9 @@ class Logarte {
   }
 
   Future<void> openConsole(BuildContext context) async {
-    return Navigator.of(context).push<void>(
-      MaterialPageRoute(
-        builder: (_) => LogarteAuthScreen(this),
-        settings: const RouteSettings(name: '/logarte_auth'),
-      ),
+    return Navigator.of(context).pushNamed<void>(
+      '/logarte_auth',
+      arguments: this,
     );
   }
 }
