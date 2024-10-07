@@ -71,8 +71,11 @@ class _LogarteFABState extends State<_LogarteFAB> {
 
   Future<void> _onPressed(BuildContext context) async {
     if (isOpened.value) {
-      Navigator.of(context).popUntil((route) => route.settings.name == '/logarte_auth');
-      if(Navigator.canPop(context)){
+      Navigator.of(context).popUntil((route) => [
+            '/logarte_auth',
+            '/logarte_dashboard'
+          ].contains(route.settings.name));
+      if (Navigator.canPop(context)) {
         Navigator.pop(context);
       }
     } else {
