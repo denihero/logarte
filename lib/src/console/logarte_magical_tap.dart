@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:logarte/logarte.dart';
 
+int _tapCount = 0;
+
 /// A widget that detects taps and shows the [Logarte] widget when the user
 class LogarteMagicalTap extends StatefulWidget {
   /// The widget below this widget in the tree.
@@ -32,13 +34,6 @@ class _LogarteMagicalTapState extends State<LogarteMagicalTap> {
   static const int _activationTapCount = 10;
   static const int _deactivationTapCount = 20;
 
-  late int _tapCount;
-
-  @override
-  void initState() {
-    super.initState();
-    _tapCount = 0;
-  }
 
   @override
   Widget build(BuildContext context) {
