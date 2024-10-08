@@ -16,6 +16,7 @@ import 'logger/outputs/memory_output.dart';
 class Logarte {
   final String? password;
   final bool ignorePassword;
+  final bool isEnabled;
   final Function(String data)? onShare;
   final int logBufferLength;
   final bool disableDebugConsoleLogs;
@@ -28,6 +29,7 @@ class Logarte {
     this.ignorePassword = !kReleaseMode,
     this.onShare,
     this.disableDebugConsoleLogs = false,
+    this.isEnabled = true,
     this.onRocketLongPressed,
     this.onRocketDoubleTapped,
     this.logBufferLength = 2500,
@@ -205,13 +207,15 @@ class Logarte {
     required BuildContext context,
     required bool visible,
   }) async {
-    if (visible) {
-      return LogarteOverlay.attach(
-        context: context,
-        instance: this,
-      );
-    } else {
-      return LogarteOverlay.detach();
+    if (isEnabled) {
+      if (visible) {
+        return LogarteOverlay.attach(
+          context: context,
+          instance: this,
+        );
+      } else {
+        return LogarteOverlay.detach();
+      }
     }
   }
 
