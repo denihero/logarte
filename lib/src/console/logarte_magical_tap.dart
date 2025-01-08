@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:logarte/logarte.dart';
 
-int _tapCount = 0;
+int tapCount = 0;
 
 /// A widget that detects taps and shows the [Logarte] widget when the user
 class LogarteMagicalTap extends StatefulWidget {
@@ -31,8 +31,8 @@ class LogarteMagicalTap extends StatefulWidget {
 }
 
 class _LogarteMagicalTapState extends State<LogarteMagicalTap> {
+
   static const int _activationTapCount = 10;
-  static const int _deactivationTapCount = 20;
 
 
   @override
@@ -40,7 +40,7 @@ class _LogarteMagicalTapState extends State<LogarteMagicalTap> {
     return GestureDetector(
       behavior: widget.behavior,
       onTap: () {
-        _tapCount++;
+        tapCount++;
         _handleLogarteVisibility(context);
       },
       child: widget.child,
@@ -48,11 +48,8 @@ class _LogarteMagicalTapState extends State<LogarteMagicalTap> {
   }
 
   void _handleLogarteVisibility(BuildContext context) {
-    if (_tapCount == _activationTapCount) {
+    if (tapCount == _activationTapCount) {
       widget.logarte.attach(context: context, visible: true);
-    } else if (_tapCount == _deactivationTapCount) {
-      widget.logarte.attach(context: context, visible: false);
-      _tapCount = 0;
     }
   }
 }

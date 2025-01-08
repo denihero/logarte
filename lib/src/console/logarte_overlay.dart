@@ -104,6 +104,7 @@ class _LogarteFABState extends State<_LogarteFAB> {
       onLongPress: () {
         if (!isOpened.value) {
           LogarteOverlay.detach();
+          tapCount = 0;
           widget.instance.onRocketLongPressed?.call(context);
         }
       },

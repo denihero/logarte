@@ -1,12 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:logarte/logarte.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:logarte/src/console/logarte_auth_screen.dart'
     show LogarteAuthScreen;
 
 final logarte = Logarte(
-  onShare: Share.share,
   ignorePassword: true,
   onRocketDoubleTapped: (context) {
     showDialog(
@@ -114,6 +112,21 @@ class HomePageState extends State<HomePage> {
       ),
       body: Column(
         children: [
+          LogarteMagicalTap(
+            logarte: logarte,
+            child: Container(
+              color: Colors.blueGrey.shade100,
+              child: const ListTile(
+                enabled: true,
+                leading: Icon(Icons.touch_app_rounded),
+                title: Text('LogarteMagicalTap'),
+                subtitle: Text(
+                  'Tap this widget 10 times to attach the logarte rocket button UI.',
+                ),
+              ),
+            ),
+          ),
+
           LogarteMagicalTap(
             logarte: logarte,
             child: Container(

@@ -7,9 +7,10 @@ class LogarteDashboardScreen extends StatefulWidget {
   final Logarte instance;
   final bool showBackButton;
   const LogarteDashboardScreen(
-    this.instance, {
-    Key? key, this.showBackButton = false
-  }) : super(key: key);
+      this.instance, {
+        Key? key,
+        this.showBackButton = false,
+      }) : super(key: key);
 
   @override
   State<LogarteDashboardScreen> createState() => _LogarteDashboardScreenState();
@@ -17,116 +18,116 @@ class LogarteDashboardScreen extends StatefulWidget {
 
 class _LogarteDashboardScreenState extends State<LogarteDashboardScreen> {
   late final TextEditingController _controller;
+  late final ValueNotifier<String> _searchNotifier;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
+    _searchNotifier = ValueNotifier<String>('');
+    _controller.addListener(() {
+      _searchNotifier.value = _controller.text.toLowerCase();
+    });
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _searchNotifier.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return LogarteThemeWrapper(
-      child: DefaultTabController(
-        length: 5,
-        child: Scaffold(
-          body: NestedScrollView(
-            headerSliverBuilder: (context, innerBoxIsScrolled) {
-              return [
-                SliverAppBar(
-                  floating: true,
-                  snap: true,
-                  leading: widget.showBackButton ? const BackButton() : null,
-                  automaticallyImplyLeading: false,
-                  title: TextField(
-                    controller: _controller,
-                    decoration: InputDecoration(
-                      hintText: 'Search',
-                      filled: true,
-                      prefixIcon: const Icon(Icons.search),
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: _controller.clear,
+    final logs = widget.instance.logs.value;
+
+    final allCount = logs.length;
+    final networkCount = logs.whereType<NetworkLogarteEntry>().length;
+    final navigationCount = logs.whereType<NavigatorLogarteEntry>().length;
+    final errorsCount = logs.whereType<PlainLogarteEntry>().length;
+
+    return PopScope(
+      canPop: false,
+      child: LogarteThemeWrapper(
+        child: DefaultTabController(
+          length: 4,
+          child: Scaffold(
+            body: NestedScrollView(
+              headerSliverBuilder: (context, _) {
+                return [
+                  SliverAppBar(
+                    floating: true,
+                    snap: true,
+                    leading: widget.showBackButton ? const BackButton() : null,
+                    automaticallyImplyLeading: false,
+                    title: TextField(
+                      controller: _controller,
+                      decoration: InputDecoration(
+                        hintText: 'Search',
+                        filled: true,
+                        prefixIcon: const Icon(Icons.search),
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: _controller.clear,
+                        ),
                       ),
                     ),
-                  ),
-                  bottom: TabBar(
-                    isScrollable: true,
-                    tabAlignment: TabAlignment.center,
-                    labelPadding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    tabs: [
-                      Tab(
-                        icon: const Icon(Icons.list_alt_rounded),
-                        text: 'All (${widget.instance.logs.value.length})',
-                      ),
-                      Tab(
-                        icon: const Icon(Icons.bug_report_rounded),
-                        text:
-                            'Logging (${widget.instance.logs.value.whereType<PlainLogarteEntry>().length})',
-                      ),
-                      Tab(
-                        icon: const Icon(Icons.public),
-                        text:
-                            'Network (${widget.instance.logs.value.whereType<NetworkLogarteEntry>().length})',
-                      ),
-                      Tab(
-                        icon: const Icon(Icons.save_as_rounded),
-                        text:
-                            'Database (${widget.instance.logs.value.whereType<DatabaseLogarteEntry>().length})',
-                      ),
-                      Tab(
-                        icon: const Icon(Icons.navigation_rounded),
-                        text:
-                            'Navigation (${widget.instance.logs.value.whereType<NavigatorLogarteEntry>().length})',
-                      ),
-                    ],
-                  ),
-                ),
-              ];
-            },
-            // To rebuild the list when the logs list gets modified
-            body: ValueListenableBuilder(
-              valueListenable: widget.instance.logs,
-              builder: (context, values, child) {
-                return AnimatedBuilder(
-                  animation: _controller,
-                  builder: (_, __) {
-                    final search = _controller.text.toLowerCase();
-
-                    return TabBarView(
-                      children: [
-                        _List<LogarteEntry>(
-                          instance: widget.instance,
-                          search: search,
+                    bottom: TabBar(
+                      isScrollable: true,
+                      tabAlignment: TabAlignment.start,
+                      labelPadding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      indicatorSize: TabBarIndicatorSize.tab,
+                      tabs: [
+                        Tab(
+                          icon: const Icon(Icons.list_alt_rounded),
+                          text: 'All ($allCount)',
                         ),
-                        _List<PlainLogarteEntry>(
-                          instance: widget.instance,
-                          search: search,
+                        Tab(
+                          icon: const Icon(Icons.public),
+                          text: 'Network ($networkCount)',
                         ),
-                        _List<NetworkLogarteEntry>(
-                          instance: widget.instance,
-                          search: search,
+                        Tab(
+                          icon: const Icon(Icons.error),
+                          text: 'Errors ($errorsCount)',
                         ),
-                        _List<DatabaseLogarteEntry>(
-                          instance: widget.instance,
-                          search: search,
-                        ),
-                        _List<NavigatorLogarteEntry>(
-                          instance: widget.instance,
-                          search: search,
+                        Tab(
+                          icon: const Icon(Icons.navigation_rounded),
+                          text: 'Navigation ($navigationCount)',
                         ),
                       ],
-                    );
-                  },
-                );
+                    ),
+                  ),
+                ];
               },
+              body: ValueListenableBuilder<String>(
+                valueListenable: _searchNotifier,
+                builder: (context, search, _) {
+                  return TabBarView(
+                    children: [
+                      _List<LogarteEntry>(
+                        instance: widget.instance,
+                        search: search,
+                        logs: logs,
+                      ),
+                      _List<NetworkLogarteEntry>(
+                        instance: widget.instance,
+                        search: search,
+                        logs: logs,
+                      ),
+                      _List<PlainLogarteEntry>(
+                        instance: widget.instance,
+                        search: search,
+                        logs: logs,
+                      ),
+                      _List<NavigatorLogarteEntry>(
+                        instance: widget.instance,
+                        search: search,
+                        logs: logs,
+                      ),
+                    ],
+                  );
+                },
+              ),
             ),
           ),
         ),
@@ -136,35 +137,38 @@ class _LogarteDashboardScreenState extends State<LogarteDashboardScreen> {
 }
 
 class _List<T extends LogarteEntry> extends StatelessWidget {
-  const _List({Key? key, required this.instance, required this.search})
-      : super(key: key);
+  const _List({
+    Key? key,
+    required this.instance,
+    required this.search,
+    required this.logs,
+  }) : super(key: key);
 
   final Logarte instance;
   final String search;
+  final List<LogarteEntry> logs;
 
   @override
   Widget build(BuildContext context) {
-    final logs = T == LogarteEntry
-        ? instance.logs.value
-        : instance.logs.value.whereType<T>().toList();
-
-    final filtered = logs.where((log) {
-      return log.contents.any(
-        (content) => content.toLowerCase().contains(search),
-      );
-    }).toList();
+    final filtered = (T == LogarteEntry
+        ? logs
+        : logs.whereType<T>().toList())
+        .where((log) => log.contents.any(
+          (content) => content.toLowerCase().contains(search),
+    ))
+        .toList()
+        .reversed
+        .toList();
 
     return Scrollbar(
-      child: ListView.separated(
+      child: ListView.builder(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         itemCount: filtered.length,
         padding: const EdgeInsets.only(bottom: 32.0, top: 8.0),
         itemBuilder: (context, index) {
-          final log = filtered.reversed.toList()[index];
-
+          final log = filtered[index];
           return LogarteEntryItem(log, instance: instance);
         },
-        separatorBuilder: (context, index) => const Divider(height: 0.0),
       ),
     );
   }
