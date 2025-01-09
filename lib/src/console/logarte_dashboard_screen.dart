@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:logarte/logarte.dart';
 import 'package:logarte/src/console/logarte_entry_item.dart';
@@ -7,10 +9,10 @@ class LogarteDashboardScreen extends StatefulWidget {
   final Logarte instance;
   final bool showBackButton;
   const LogarteDashboardScreen(
-      this.instance, {
-        Key? key,
-        this.showBackButton = false,
-      }) : super(key: key);
+    this.instance, {
+    Key? key,
+    this.showBackButton = false,
+  }) : super(key: key);
 
   @override
   State<LogarteDashboardScreen> createState() => _LogarteDashboardScreenState();
@@ -60,6 +62,17 @@ class _LogarteDashboardScreenState extends State<LogarteDashboardScreen> {
                     snap: true,
                     leading: widget.showBackButton ? const BackButton() : null,
                     automaticallyImplyLeading: false,
+                    actions: [
+                      IconButton(
+                        onPressed: () {
+                          logs.clear();
+                          setState(() {
+
+                          });
+                        },
+                        icon: Icon(Icons.delete),
+                      ),
+                    ],
                     title: TextField(
                       controller: _controller,
                       decoration: InputDecoration(
@@ -75,7 +88,8 @@ class _LogarteDashboardScreenState extends State<LogarteDashboardScreen> {
                     bottom: TabBar(
                       isScrollable: true,
                       tabAlignment: TabAlignment.start,
-                      labelPadding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      labelPadding:
+                          const EdgeInsets.symmetric(horizontal: 12.0),
                       indicatorSize: TabBarIndicatorSize.tab,
                       tabs: [
                         Tab(
@@ -150,12 +164,10 @@ class _List<T extends LogarteEntry> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final filtered = (T == LogarteEntry
-        ? logs
-        : logs.whereType<T>().toList())
+    final filtered = (T == LogarteEntry ? logs : logs.whereType<T>().toList())
         .where((log) => log.contents.any(
-          (content) => content.toLowerCase().contains(search),
-    ))
+              (content) => content.toLowerCase().contains(search),
+            ))
         .toList()
         .reversed
         .toList();
