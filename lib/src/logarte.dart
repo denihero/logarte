@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:logarte/src/console/logarte_auth_screen.dart';
 import 'package:logarte/src/console/logarte_overlay.dart';
 import 'package:logarte/src/extensions/object_extensions.dart';
 import 'package:logarte/src/extensions/route_extensions.dart';
@@ -70,21 +69,13 @@ class Logarte {
     Trace? trace,
     String? source,
   }) {
-    // TODO: try and catch
-    if (!disableDebugConsoleLogs) {
-      _logger.log(
-        level,
-        message.toString(),
+    if (write) {
+      _add(
+        PlainLogarteEntry(
+          message.toString(),
+          source: source ?? (trace ?? Trace.current()).source,
+        ),
       );
-
-      if (write) {
-        _add(
-          PlainLogarteEntry(
-            message.toString(),
-            source: source ?? (trace ?? Trace.current()).source,
-          ),
-        );
-      }
     }
   }
 
