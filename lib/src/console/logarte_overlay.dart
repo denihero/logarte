@@ -58,39 +58,16 @@ class _LogarteFAB extends StatefulWidget {
   final Logarte instance;
 
   const _LogarteFAB({
-    Key? key,
+    super.key,
     required this.instance,
-  }) : super(key: key);
+  });
 
   @override
   _LogarteFABState createState() => _LogarteFABState();
 }
 
 class _LogarteFABState extends State<_LogarteFAB> {
-  ValueNotifier<bool> isOpened = ValueNotifier(false);
-
-  Future<void> _onPressed(BuildContext context) async {
-    if (isOpened.value) {
-      Navigator.of(context).popUntil((route) => [
-            '/logarte_auth',
-            '/logarte_dashboard'
-          ].contains(route.settings.name));
-      if (Navigator.canPop(context)) {
-        Navigator.pop(context);
-      }
-    } else {
-      Navigator.of(context).push<void>(
-        MaterialPageRoute(
-          builder: (_) {
-            return LogarteAuthScreen(widget.instance);
-          },
-          settings: const RouteSettings(name: '/logarte_auth'),
-        ),
-      );
-    }
-
-    isOpened.value = !isOpened.value;
-  }
+  final isOpened = ValueNotifier(false);
 
   @override
   Widget build(BuildContext context) {
@@ -129,5 +106,26 @@ class _LogarteFABState extends State<_LogarteFAB> {
         ),
       ),
     );
+  }
+
+  Future<void> _onPressed(BuildContext context) async {
+    if (isOpened.value) {
+      Navigator.of(context).popUntil(
+          (route) => ['/logarte_auth', '/logarte_dashboard'].contains(route.settings.name));
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+    } else {
+      Navigator.of(context).push<void>(
+        MaterialPageRoute(
+          builder: (_) {
+            return LogarteAuthScreen(widget.instance);
+          },
+          settings: const RouteSettings(name: '/logarte_auth'),
+        ),
+      );
+    }
+
+    isOpened.value = !isOpened.value;
   }
 }

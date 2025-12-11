@@ -12,9 +12,9 @@ class LogarteEntryItem extends StatelessWidget {
 
   const LogarteEntryItem(
     this.entry, {
-    Key? key,
+    super.key,
     required this.instance,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +26,6 @@ class LogarteEntryItem extends StatelessWidget {
     } else if (entry is PlainLogarteEntry) {
       return _PlainItem(
         entry: entry as PlainLogarteEntry,
-      );
-    } else if (entry is DatabaseLogarteEntry) {
-      return _DatabaseItem(
-        entry: entry as DatabaseLogarteEntry,
       );
     } else if (entry is NavigatorLogarteEntry) {
       return _NavigationItem(
@@ -45,9 +41,9 @@ class _PlainItem extends StatelessWidget {
   final PlainLogarteEntry entry;
 
   const _PlainItem({
-    Key? key,
     required this.entry,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -91,9 +87,9 @@ class _NavigationItem extends StatelessWidget {
   final NavigatorLogarteEntry entry;
 
   const _NavigationItem({
-    Key? key,
     required this.entry,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -147,10 +143,10 @@ class _NetworkItem extends StatelessWidget {
   final Logarte instance;
 
   const _NetworkItem({
-    Key? key,
     required this.entry,
     required this.instance,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -173,14 +169,12 @@ class _NetworkItem extends StatelessWidget {
           Icon(
             entry.response.statusCode == null
                 ? Icons.public_off_rounded
-                : entry.response.statusCode! >= 200 &&
-                        entry.response.statusCode! < 300
+                : entry.response.statusCode! >= 200 && entry.response.statusCode! < 300
                     ? Icons.public_rounded
                     : Icons.public_off_rounded,
             color: entry.response.statusCode == null
                 ? Colors.grey
-                : entry.response.statusCode! >= 200 &&
-                        entry.response.statusCode! < 300
+                : entry.response.statusCode! >= 200 && entry.response.statusCode! < 300
                     ? Colors.green
                     : Colors.red,
             size: 20.0,
@@ -202,11 +196,9 @@ class _NetworkItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            // TODO: can also display the path
             entry.request.url,
-            // Uri.parse(entry.request.url).path,
             overflow: TextOverflow.ellipsis,
-            maxLines: 2,
+            maxLines: 3,
             style: const TextStyle(fontSize: 14.0),
           ),
           Padding(
@@ -224,58 +216,6 @@ class _NetworkItem extends StatelessWidget {
       trailing: const Icon(
         Icons.chevron_right,
         color: Colors.grey,
-      ),
-    );
-  }
-}
-
-class _DatabaseItem extends StatelessWidget {
-  final DatabaseLogarteEntry entry;
-
-  const _DatabaseItem({
-    Key? key,
-    required this.entry,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      dense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-      onTap: () {
-        entry.value?.toString().copyToClipboard(context);
-      },
-      title: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.save_as_rounded,
-                size: 20.0,
-              ),
-              const SizedBox(width: 8.0),
-              _LuxuryText(
-                text: '*${entry.target}*: ${entry.value}',
-                // style: const TextStyle(
-                //   fontSize: 14.0,
-                //   fontWeight: FontWeight.w600,
-                // ),
-              ),
-            ],
-          ),
-        ],
-      ),
-      subtitle: Padding(
-        padding: const EdgeInsets.only(top: 2.0),
-        child: Text(
-          '${entry.timeFormatted} • ${entry.source.toString()}',
-          style: const TextStyle(
-            fontSize: 12.0,
-            color: Colors.grey,
-          ),
-        ),
       ),
     );
   }

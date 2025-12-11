@@ -20,11 +20,11 @@ class LogarteMagicalTap extends StatefulWidget {
   ///
   /// The [child] and [logarte] arguments are required.
   const LogarteMagicalTap({
-    Key? key,
+    super.key,
     required this.child,
     required this.logarte,
     this.behavior = HitTestBehavior.translucent,
-  }) : super(key: key);
+  });
 
   @override
   State<LogarteMagicalTap> createState() => _LogarteMagicalTapState();

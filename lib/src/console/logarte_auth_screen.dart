@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:logarte/logarte.dart';
-import 'package:logarte/src/console/logarte_dashboard_screen.dart';
 import 'package:logarte/src/console/logarte_theme_wrapper.dart';
 
 T? ambiguate<T>(T? value) => value;
@@ -23,20 +22,7 @@ class _LogarteAuthScreenState extends State<LogarteAuthScreen> {
   bool get isLoggedIn => _isLoggedIn;
   bool get _noPassword => widget.instance.password == null;
 
-  late final TextEditingController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _controller = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  late final _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -54,10 +40,11 @@ class _LogarteAuthScreenState extends State<LogarteAuthScreen> {
                   child: TextField(
                     autofocus: true,
                     controller: _controller,
+                    obscureText: true,
                     onSubmitted: (_) => _onSubmit(),
                     decoration: const InputDecoration(
                       filled: true,
-                      labelText: 'Password',
+                      labelText: 'Пароль',
                       contentPadding: EdgeInsets.symmetric(
                         horizontal: 12.0,
                         vertical: 8.0,
@@ -67,8 +54,7 @@ class _LogarteAuthScreenState extends State<LogarteAuthScreen> {
                     ),
                   ),
                 ),
-                floatingActionButtonLocation:
-                    FloatingActionButtonLocation.centerFloat,
+                floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
                 floatingActionButton: FloatingActionButton.large(
                   onPressed: _onSubmit,
                   child: const Icon(Icons.login),
@@ -99,5 +85,11 @@ class _LogarteAuthScreenState extends State<LogarteAuthScreen> {
     );
 
     _isLoggedIn = true;
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }

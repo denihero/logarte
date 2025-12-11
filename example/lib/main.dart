@@ -6,6 +6,7 @@ import 'package:logarte/src/console/logarte_auth_screen.dart'
 
 final logarte = Logarte(
   ignorePassword: true,
+  disableDebugConsoleLogs: true,
   onRocketDoubleTapped: (context) {
     showDialog(
       context: context,

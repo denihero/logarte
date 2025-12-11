@@ -1,117 +1,137 @@
 import 'package:flutter/material.dart';
+import 'package:json_explorer/json_explorer.dart';
 import 'package:logarte/logarte.dart';
 import 'package:logarte/src/console/logarte_theme_wrapper.dart';
 import 'package:logarte/src/extensions/entry_extensions.dart';
 import 'package:logarte/src/extensions/object_extensions.dart';
 import 'package:logarte/src/extensions/string_extensions.dart';
+import 'package:provider/provider.dart';
 
-class NetworkLogEntryDetailsScreen extends StatelessWidget {
+class NetworkLogEntryDetailsScreen extends StatefulWidget {
   final NetworkLogarteEntry entry;
   final Logarte instance;
 
   const NetworkLogEntryDetailsScreen(
     this.entry, {
-    Key? key,
+    super.key,
     required this.instance,
-  }) : super(key: key);
+  });
+
+  @override
+  State<NetworkLogEntryDetailsScreen> createState() => _NetworkLogEntryDetailsScreenState();
+}
+
+class _NetworkLogEntryDetailsScreenState extends State<NetworkLogEntryDetailsScreen> {
+  final JsonExplorerStore store = JsonExplorerStore();
+
+  @override
+  void initState() {
+    super.initState();
+    store.buildNodes(widget.entry.response.body);
+  }
 
   @override
   Widget build(BuildContext context) {
     return LogarteThemeWrapper(
       child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            onPressed: Navigator.of(context).pop,
-            icon: const Icon(Icons.arrow_back),
-          ),
-          title: Text(
-            '${entry.asReadableDuration}, ${entry.response.body.toString().asReadableSize}',
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          centerTitle: false,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.share),
-              onPressed: () {
-                final text = entry.toString();
-                instance.onShare?.call(text);
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.copy_all),
-              onPressed: () {
-                final text = entry.toString();
-                text.copyToClipboard(context);
-              },
-            ),
-            const SizedBox(width: 12.0),
-          ],
-        ),
         body: DefaultTabController(
           length: 2,
-          child: Column(
-            children: [
-              const TabBar(
-                tabs: [
-                  Tab(text: 'Request'),
-                  Tab(text: 'Response'),
-                ],
-              ),
-              Expanded(
-                child: TabBarView(
-                  children: [
-                    Scrollbar(
-                      child: ListView(
+          child: ChangeNotifierProvider.value(
+            value: store,
+            child: NestedScrollView(
+              headerSliverBuilder: (context, innerScrolled) {
+                return [
+                  SliverAppBar(
+                    leading: IconButton(
+                      onPressed: Navigator.of(context).pop,
+                      icon: const Icon(Icons.arrow_back),
+                    ),
+                    title: Text(
+                      '${widget.entry.asReadableDuration}, '
+                      '${widget.entry.response.body.toString().asReadableSize}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    floating: true,
+                    snap: true,
+                    actions: [
+                      IconButton(
+                        icon: const Icon(Icons.share),
+                        onPressed: () {
+                          final text = widget.entry.toString();
+                          widget.instance.onShare?.call(text);
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.copy_all),
+                        onPressed: () {
+                          final text = widget.entry.toString();
+                          text.copyToClipboard(context);
+                        },
+                      ),
+                      const SizedBox(width: 12),
+                    ],
+                    bottom: const TabBar(
+                      tabs: [
+                        Tab(text: 'Request'),
+                        Tab(text: 'Response'),
+                      ],
+                    ),
+                  ),
+                ];
+              },
+              body: TabBarView(
+                children: [
+                  CustomScrollView(
+                    slivers: [
+                      SliverList.list(
                         children: [
                           SelectableCopiableTile(
                             title: 'METHOD',
-                            subtitle: entry.request.method,
+                            subtitle: widget.entry.request.method,
                           ),
-                          const Divider(height: 0.0),
+                          const Divider(height: 0),
                           SelectableCopiableTile(
                             title: 'URL',
-                            subtitle: entry.request.url,
+                            subtitle: widget.entry.request.url,
                           ),
-                          const Divider(height: 0.0),
+                          const Divider(height: 0),
                           SelectableCopiableTile(
                             title: 'HEADERS',
-                            subtitle: entry.request.headers.prettyJson,
+                            subtitle: widget.entry.request.headers.prettyJson,
                           ),
-                          if (entry.request.method != 'GET') ...[
-                            const Divider(height: 0.0),
+                          if (widget.entry.request.method != 'GET') ...[
+                            const Divider(height: 0),
                             SelectableCopiableTile(
                               title: 'BODY',
-                              subtitle: entry.request.body.prettyJson,
+                              subtitle: widget.entry.request.body.prettyJson,
                             ),
                           ],
                         ],
                       ),
-                    ),
-                    Scrollbar(
-                      child: ListView(
+                    ],
+                  ),
+                  CustomScrollView(
+                    slivers: [
+                      SliverList.list(
                         children: [
-                          SelectableCopiableTile(
-                            title: 'STATUS CODE',
-                            subtitle: entry.response.statusCode.toString(),
-                          ),
-                          const Divider(height: 0.0),
-                          SelectableCopiableTile(
+                          const Divider(height: 0),
+                          SelectableExpansionTile(
                             title: 'HEADERS',
-                            subtitle: entry.response.headers.prettyJson,
+                            subtitle: widget.entry.response.headers.prettyJson,
                           ),
-                          const Divider(height: 0.0),
+                          const Divider(height: 0),
                           SelectableCopiableTile(
-                            title: 'BODY',
-                            subtitle: entry.response.body.prettyJson,
+                            title: 'RESPONSE | STATUS CODE ${widget.entry.response.statusCode}',
+                            subtitle: widget.entry.response.body.prettyJson,
                           ),
                         ],
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -126,8 +146,8 @@ class SelectableCopiableTile extends StatelessWidget {
   const SelectableCopiableTile({
     required this.title,
     required this.subtitle,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -135,23 +155,43 @@ class SelectableCopiableTile extends StatelessWidget {
       onTap: () => _copyToClipboard(context),
       title: SelectableText(
         title,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-        ),
-        onTap: () => _copyToClipboard(context),
+        style: const TextStyle(fontWeight: FontWeight.bold),
       ),
       subtitle: Padding(
-        padding: const EdgeInsets.only(top: 4.0),
-        child: SelectableText(
-          subtitle,
-          onTap: () => _copyToClipboard(context),
-        ),
+        padding: const EdgeInsets.only(top: 4),
+        child: SelectableText(subtitle),
       ),
-      // trailing: const Icon(Icons.copy),
     );
   }
 
   Future<void> _copyToClipboard(BuildContext context) {
     return subtitle.copyToClipboard(context);
+  }
+}
+
+class SelectableExpansionTile extends StatelessWidget {
+  final String title;
+  final String subtitle;
+
+  const SelectableExpansionTile({
+    required this.title,
+    required this.subtitle,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ExpansionTile(
+      title: Text(
+        title,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(12),
+          child: SelectableText(subtitle),
+        ),
+      ],
+    );
   }
 }

@@ -6,26 +6,26 @@ import 'package:logarte/src/console/logarte_entry_item.dart';
 import 'package:logarte/src/console/logarte_theme_wrapper.dart';
 
 class LogarteDashboardScreen extends StatefulWidget {
-  final Logarte instance;
-  final bool showBackButton;
   const LogarteDashboardScreen(
     this.instance, {
-    Key? key,
     this.showBackButton = false,
-  }) : super(key: key);
+    super.key,
+  });
+
+  final Logarte instance;
+  final bool showBackButton;
 
   @override
   State<LogarteDashboardScreen> createState() => _LogarteDashboardScreenState();
 }
 
 class _LogarteDashboardScreenState extends State<LogarteDashboardScreen> {
-  late final TextEditingController _controller;
+  final TextEditingController _controller = TextEditingController();
   late final ValueNotifier<String> _searchNotifier;
 
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController();
     _searchNotifier = ValueNotifier<String>('');
     _controller.addListener(() {
       _searchNotifier.value = _controller.text.toLowerCase();
@@ -66,9 +66,7 @@ class _LogarteDashboardScreenState extends State<LogarteDashboardScreen> {
                       IconButton(
                         onPressed: () {
                           logs.clear();
-                          setState(() {
-
-                          });
+                          setState(() {});
                         },
                         icon: Icon(Icons.delete),
                       ),
@@ -88,25 +86,24 @@ class _LogarteDashboardScreenState extends State<LogarteDashboardScreen> {
                     bottom: TabBar(
                       isScrollable: true,
                       tabAlignment: TabAlignment.start,
-                      labelPadding:
-                          const EdgeInsets.symmetric(horizontal: 12.0),
+                      labelPadding: const EdgeInsets.symmetric(horizontal: 12.0),
                       indicatorSize: TabBarIndicatorSize.tab,
                       tabs: [
                         Tab(
                           icon: const Icon(Icons.list_alt_rounded),
-                          text: 'All ($allCount)',
+                          text: 'Все ($allCount)',
                         ),
                         Tab(
                           icon: const Icon(Icons.public),
-                          text: 'Network ($networkCount)',
+                          text: 'Запросы ($networkCount)',
                         ),
                         Tab(
                           icon: const Icon(Icons.error),
-                          text: 'Errors ($errorsCount)',
+                          text: 'Ошибки ($errorsCount)',
                         ),
                         Tab(
                           icon: const Icon(Icons.navigation_rounded),
-                          text: 'Navigation ($navigationCount)',
+                          text: 'Навигация ($navigationCount)',
                         ),
                       ],
                     ),
@@ -152,11 +149,11 @@ class _LogarteDashboardScreenState extends State<LogarteDashboardScreen> {
 
 class _List<T extends LogarteEntry> extends StatelessWidget {
   const _List({
-    Key? key,
+    super.key,
     required this.instance,
     required this.search,
     required this.logs,
-  }) : super(key: key);
+  });
 
   final Logarte instance;
   final String search;

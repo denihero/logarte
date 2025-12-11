@@ -25,8 +25,7 @@ class PlainLogarteEntry extends LogarteEntry {
   PlainLogarteEntry(
     this.message, {
     this.source,
-  })  : super(LogarteType.plain);
-
+  }) : super(LogarteType.plain);
 
   @override
   List<String> get contents => [
@@ -49,8 +48,7 @@ class NavigatorLogarteEntry extends LogarteEntry {
   @override
   List<String> get contents => [
         if (route?.settings.name != null) route!.settings.name!,
-        if (route?.settings.arguments != null)
-          route!.settings.arguments.toString(),
+        if (route?.settings.arguments != null) route!.settings.arguments.toString(),
         action.name,
         if (previousRoute != null && previousRoute!.settings.name != null)
           previousRoute!.settings.name!,
