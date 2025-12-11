@@ -16,6 +16,8 @@ class LogarteMagicalTap extends StatefulWidget {
   /// The [Logarte] instance to show when the user taps the widget.
   final Logarte logarte;
 
+  final bool isEnabled;
+
   /// Creates a new instance of [LogarteMagicalTap].
   ///
   /// The [child] and [logarte] arguments are required.
@@ -23,6 +25,7 @@ class LogarteMagicalTap extends StatefulWidget {
     super.key,
     required this.child,
     required this.logarte,
+    this.isEnabled = false,
     this.behavior = HitTestBehavior.translucent,
   });
 
@@ -31,15 +34,15 @@ class LogarteMagicalTap extends StatefulWidget {
 }
 
 class _LogarteMagicalTapState extends State<LogarteMagicalTap> {
-
   static const int _activationTapCount = 10;
-
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: widget.behavior,
       onTap: () {
+        if (!widget.isEnabled) return;
+
         tapCount++;
         _handleLogarteVisibility(context);
       },
